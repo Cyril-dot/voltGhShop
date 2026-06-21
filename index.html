@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VoltGH – Ghana's #1 Electronics & Home Appliances Store. TVs, Fridges, ACs, Laptops & more. Pay with MoMo. Fast delivery nationwide.">
+  <meta name="keywords" content="electronics Ghana, home appliances Accra, TV Ghana, fridge Ghana, AC Ghana, laptop Ghana, MoMo payment">
+  <meta property="og:title" content="VoltGH – Electronics & Home Appliances Ghana">
+  <meta property="og:description" content="Best prices on TVs, Fridges, ACs, Washing Machines, Laptops & more. Pay with MTN MoMo.">
+  <title>VoltGH – Electronics & Home Appliances Ghana</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* VoltGH overrides */
+    .logo-icon { background: linear-gradient(135deg, #1D4ED8, #1E40AF); }
+    .btn-primary { background: #1D4ED8; }
+    .btn-primary:hover { background: #1E40AF; box-shadow: 0 8px 25px rgba(29,78,216,0.4); }
+    .promo-banner { background: linear-gradient(90deg, #1D4ED8, #1E40AF); }
+    .hero { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 55%, #1D4ED8 100%); }
+    .section-eyebrow { color: #1D4ED8; }
+    .product-detail-price { color: #1D4ED8; }
+    .price-current { color: #1D4ED8; }
+    .btn-add-cart { background: #1D4ED8; }
+    .btn-add-cart:hover { background: #1E40AF; }
+    .product-badge { background: #1D4ED8; }
+    .product-badge.new { background: #10B981; }
+    .paid-btn { background: #10B981; }
+    .paid-btn:hover { background: #059669; }
+    .hero::before { background: radial-gradient(circle, rgba(29,78,216,0.3) 0%, transparent 70%); }
+    .hero::after  { background: radial-gradient(circle, rgba(29,78,216,0.15) 0%, transparent 70%); }
+
+    /* Category card mat icon */
+    .cat-mat-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+    .mat-icon-sm { font-size: 20px; line-height: 1; }
+    .mat-icon-md { font-size: 24px; line-height: 1; }
+    .nav-btn .material-symbols-outlined { font-size: 22px; }
+
+    /* Hero visual mockup */
+    .hero-device-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 320px;
+    }
+    .hero-device-tile {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 18px 14px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+    .hero-device-tile.large {
+      grid-column: span 2;
+    }
+    .hero-device-tile .mat-icon {
+      font-size: 2.2rem;
+      color: rgba(255,255,255,0.85);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .hero-device-tile span.label {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Trust strip icons */
+    .trust-item .material-symbols-outlined {
+      font-size: 26px;
+      color: #1D4ED8;
+    }
+  </style>
+</head>
+<body>
+
+<!-- PROMO BANNER -->
+<div class="promo-banner">
+  <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">bolt</span>
+  <span>FREE delivery on orders above GHS 1,000 &nbsp;|&nbsp; Pay with MTN MoMo 💛 &nbsp;|&nbsp; WhatsApp: 0549703320</span>
+  <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">bolt</span>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+
+    <div class="logo" onclick="App.navigate('home')" style="cursor:pointer">
+      <div class="logo-icon">
+        <span class="material-symbols-outlined" style="font-size:22px;color:white;font-variation-settings:'FILL' 1">bolt</span>
+      </div>
+      VoltGH
+    </div>
+
+    <div class="search-bar" id="search-wrap">
+      <span class="search-icon">
+        <span class="material-symbols-outlined" style="font-size:18px">search</span>
+      </span>
+      <input type="text" id="search-input" placeholder="Search TVs, fridges, laptops…" autocomplete="off">
+      <button onclick="handleSearch({type:'click'})" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#1D4ED8;color:white;border:none;border-radius:6px;padding:5px 12px;font-size:0.75rem;cursor:pointer;font-weight:600">Search</button>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-btn" id="dark-toggle" title="Toggle dark mode">
+        <span class="material-symbols-outlined">dark_mode</span>
+      </button>
+      <button class="nav-btn" id="mobile-search-toggle" title="Search" style="display:none">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <button class="nav-btn" onclick="openWishlist()" title="Wishlist" style="position:relative">
+        <span class="material-symbols-outlined">favorite</span>
+        <span class="badge wishlist-badge" style="display:none">0</span>
+      </button>
+      <button class="nav-btn" onclick="openCart()" title="Cart" style="position:relative">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <span class="badge cart-badge" style="display:none">0</span>
+      </button>
+      <a href="admin.html" class="nav-btn" title="Admin Dashboard">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+      </a>
+      <button class="nav-btn" id="hamburger" title="Menu" style="display:none">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MOBILE SEARCH -->
+  <div class="search-bar" id="mobile-search-bar" style="display:none;padding:10px 16px;border-top:1px solid var(--border)">
+    <span class="search-icon"><span class="material-symbols-outlined" style="font-size:18px">search</span></span>
+    <input type="text" id="mobile-search-input" placeholder="Search products…">
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="App.navigate('home'); document.getElementById('mobile-menu').classList.remove('active')">
+    <span class="material-symbols-outlined">home</span> Home
+  </a>
+  <a onclick="App.navigate('shop'); document.getElementById('mobile-menu').classList.remove('active')">
+    <span class="material-symbols-outlined">storefront</span> Shop All
+  </a>
+  <a onclick="App.navigate('cart'); document.getElementById('mobile-menu').classList.remove('active')">
+    <span class="material-symbols-outlined">shopping_cart</span> My Cart
+  </a>
+  <a onclick="App.navigate('wishlist'); document.getElementById('mobile-menu').classList.remove('active')">
+    <span class="material-symbols-outlined">favorite</span> Wishlist
+  </a>
+  <a onclick="App.navigate('tracking'); document.getElementById('mobile-menu').classList.remove('active')">
+    <span class="material-symbols-outlined">local_shipping</span> Track Order
+  </a>
+  <a href="admin.html">
+    <span class="material-symbols-outlined">admin_panel_settings</span> Admin Dashboard
+  </a>
+</div>
+
+<!-- ===== PAGES ===== -->
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge">
+          <span class="material-symbols-outlined" style="font-size:14px;color:inherit">verified</span>
+          Ghana's Trusted Electronics Store
+        </div>
+        <h1>Power Your Home &amp;<br><span>Life with VoltGH</span></h1>
+        <p>TVs, Fridges, ACs, Washing Machines, Laptops &amp; more — delivered across Ghana. Pay easily with MTN Mobile Money.</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="App.navigate('shop')">
+            <span class="material-symbols-outlined mat-icon-sm">storefront</span> Shop Now
+          </button>
+          <button class="btn btn-outline" onclick="App.navigate('tracking')">
+            <span class="material-symbols-outlined mat-icon-sm">local_shipping</span> Track Order
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong>1,200+</strong><span>Products</span></div>
+          <div class="hero-stat"><strong>5,000+</strong><span>Customers</span></div>
+          <div class="hero-stat"><strong>4.8★</strong><span>Rating</span></div>
+        </div>
+      </div>
+
+      <div class="hero-image-area">
+        <div class="hero-device-grid">
+          <div class="hero-device-tile large">
+            <span class="material-symbols-outlined mat-icon" style="font-size:3rem;font-variation-settings:'FILL' 1">tv</span>
+            <div style="color:white;font-weight:700;font-size:0.95rem">Smart TVs &amp; Displays</div>
+            <span class="label">4K • OLED • QLED</span>
+          </div>
+          <div class="hero-device-tile">
+            <span class="material-symbols-outlined mat-icon" style="font-variation-settings:'FILL' 1">kitchen</span>
+            <span class="label">Fridges</span>
+          </div>
+          <div class="hero-device-tile">
+            <span class="material-symbols-outlined mat-icon" style="font-variation-settings:'FILL' 1">laptop</span>
+            <span class="label">Laptops</span>
+          </div>
+          <div class="hero-device-tile">
+            <span class="material-symbols-outlined mat-icon" style="font-variation-settings:'FILL' 1">ac_unit</span>
+            <span class="label">Air Conditioners</span>
+          </div>
+          <div class="hero-device-tile">
+            <span class="material-symbols-outlined mat-icon" style="font-variation-settings:'FILL' 1">microwave</span>
+            <span class="label">Cooking</span>
+          </div>
+        </div>
+
+        <div class="hero-floating-card card1">
+          <div class="card-icon" style="background:#DBEAFE">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#1D4ED8;font-variation-settings:'FILL' 1">local_shipping</span>
+          </div>
+          <div class="card-text">
+            <strong>Free Delivery</strong>
+            <span>On orders over GHS 1,000</span>
+          </div>
+        </div>
+        <div class="hero-floating-card card2">
+          <div class="card-icon" style="background:#D1FAE5">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#059669;font-variation-settings:'FILL' 1">payments</span>
+          </div>
+          <div class="card-text">
+            <strong>Pay with MoMo</strong>
+            <span>MTN 0549703320</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST STRIP -->
+  <section style="background:var(--card-bg);border-bottom:1px solid var(--border);padding:18px 20px">
+    <div class="container" style="display:flex;justify-content:center;gap:36px;flex-wrap:wrap">
+      <div class="trust-item" style="display:flex;align-items:center;gap:10px">
+        <span class="material-symbols-outlined" style="font-size:26px;color:#1D4ED8;font-variation-settings:'FILL' 1">verified_user</span>
+        <div><strong style="font-size:0.85rem;display:block">100% Genuine</strong><span style="font-size:0.75rem;color:var(--text-muted)">Authentic brands</span></div>
+      </div>
+      <div class="trust-item" style="display:flex;align-items:center;gap:10px">
+        <span class="material-symbols-outlined" style="font-size:26px;color:#D97706;font-variation-settings:'FILL' 1">payments</span>
+        <div><strong style="font-size:0.85rem;display:block">MoMo Payment</strong><span style="font-size:0.75rem;color:var(--text-muted)">MTN Mobile Money</span></div>
+      </div>
+      <div class="trust-item" style="display:flex;align-items:center;gap:10px">
+        <span class="material-symbols-outlined" style="font-size:26px;color:#059669;font-variation-settings:'FILL' 1">local_shipping</span>
+        <div><strong style="font-size:0.85rem;display:block">Nationwide Delivery</strong><span style="font-size:0.75rem;color:var(--text-muted)">All Ghana regions</span></div>
+      </div>
+      <div class="trust-item" style="display:flex;align-items:center;gap:10px">
+        <span class="material-symbols-outlined" style="font-size:26px;color:#7C3AED;font-variation-settings:'FILL' 1">support_agent</span>
+        <div><strong style="font-size:0.85rem;display:block">WhatsApp Support</strong><span style="font-size:0.75rem;color:var(--text-muted)">0549703320</span></div>
+      </div>
+      <div class="trust-item" style="display:flex;align-items:center;gap:10px">
+        <span class="material-symbols-outlined" style="font-size:26px;color:#DB2777;font-variation-settings:'FILL' 1">warranty</span>
+        <div><strong style="font-size:0.85rem;display:block">Warranty Included</strong><span style="font-size:0.75rem;color:var(--text-muted)">On all appliances</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section section-alt">
+    <div class="section-header">
+      <span class="section-eyebrow">BROWSE BY CATEGORY</span>
+      <h2>Shop by Category</h2>
+      <p>From smart TVs to kitchen appliances — find everything you need</p>
+    </div>
+    <div class="categories-grid" id="categories-grid"></div>
+  </section>
+
+  <!-- FEATURED -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-eyebrow">BEST SELLERS</span>
+      <h2>Featured Products</h2>
+      <p>Our most popular electronics and home appliances</p>
+    </div>
+    <div class="filters-bar">
+      <button class="filter-tag active" onclick="setHomeFilter('all', this)">All</button>
+      <button class="filter-tag" onclick="setHomeFilter('hot', this)">
+        <span class="material-symbols-outlined mat-icon-sm" style="font-variation-settings:'FILL' 1">local_fire_department</span> Hot Deals
+      </button>
+      <button class="filter-tag" onclick="setHomeFilter('sale', this)">
+        <span class="material-symbols-outlined mat-icon-sm">sell</span> On Sale
+      </button>
+      <button class="filter-tag" onclick="setHomeFilter('new', this)">
+        <span class="material-symbols-outlined mat-icon-sm">new_releases</span> New In
+      </button>
+    </div>
+    <div class="products-grid" id="featured-products">
+      <!-- skeleton -->
+      <div class="product-card"><div class="product-img-wrap skeleton" style="padding-top:75%"></div><div class="product-info"><div class="skeleton" style="height:12px;width:60%;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:90%;margin-bottom:12px"></div><div class="skeleton" style="height:36px;width:100%;border-radius:8px"></div></div></div>
+      <div class="product-card"><div class="product-img-wrap skeleton" style="padding-top:75%"></div><div class="product-info"><div class="skeleton" style="height:12px;width:60%;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:90%;margin-bottom:12px"></div><div class="skeleton" style="height:36px;width:100%;border-radius:8px"></div></div></div>
+      <div class="product-card"><div class="product-img-wrap skeleton" style="padding-top:75%"></div><div class="product-info"><div class="skeleton" style="height:12px;width:60%;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:90%;margin-bottom:12px"></div><div class="skeleton" style="height:36px;width:100%;border-radius:8px"></div></div></div>
+      <div class="product-card"><div class="product-img-wrap skeleton" style="padding-top:75%"></div><div class="product-info"><div class="skeleton" style="height:12px;width:60%;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:90%;margin-bottom:12px"></div><div class="skeleton" style="height:36px;width:100%;border-radius:8px"></div></div></div>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <button class="btn btn-dark" onclick="App.navigate('shop')" style="padding:13px 32px;border-radius:12px;font-size:1rem">
+        View All Products <span class="material-symbols-outlined mat-icon-sm">arrow_forward</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- PROMO BAND -->
+  <section style="background:linear-gradient(135deg,#1D4ED8,#1E40AF);padding:56px 20px;text-align:center">
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px">
+      <span class="material-symbols-outlined" style="font-size:2.2rem;color:rgba(255,255,255,0.8);font-variation-settings:'FILL' 1">local_shipping</span>
+      <h2 style="color:white;font-size:clamp(1.4rem,3.5vw,2rem)">Free Delivery on Orders Above GHS 1,000</h2>
+    </div>
+    <p style="color:rgba(255,255,255,0.75);margin-bottom:24px;font-size:1rem">Shop now — we deliver fridges, TVs, ACs and more across all regions in Ghana</p>
+    <button class="btn" onclick="App.navigate('shop')" style="background:white;color:#1D4ED8;padding:13px 32px;border-radius:12px;font-weight:700;font-size:1rem">
+      Shop Now <span class="material-symbols-outlined mat-icon-sm">arrow_forward</span>
+    </button>
+  </section>
+
+  <!-- NEW ARRIVALS -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-eyebrow">JUST IN</span>
+      <h2>New Arrivals</h2>
+      <p>Fresh electronics and appliances just added to our store</p>
+    </div>
+    <div class="products-grid" id="new-arrivals"></div>
+  </section>
+
+  <!-- RECENTLY VIEWED -->
+  <div id="recently-viewed-section" style="display:none;padding:0 0 40px">
+    <div class="recently-viewed">
+      <h3 style="display:flex;align-items:center;gap:8px">
+        <span class="material-symbols-outlined" style="font-size:20px;color:#1D4ED8">history</span> Recently Viewed
+      </h3>
+      <div class="rv-scroll" id="recently-viewed"></div>
+    </div>
+  </div>
+
+  <!-- WHY CHOOSE US -->
+  <section class="section section-alt">
+    <div class="section-header">
+      <span class="section-eyebrow">WHY VOLTGH?</span>
+      <h2>Why Thousands Choose VoltGH</h2>
+    </div>
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;align-items:stretch">
+
+      <div class="why-card" onmouseover="this.style.borderColor='#1D4ED8'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="why-icon" style="background:rgba(29,78,216,0.1);color:#1D4ED8">
+          <span class="material-symbols-outlined" style="font-size:30px;font-variation-settings:'FILL' 1">verified</span>
+        </div>
+        <h3>100% Genuine Products</h3>
+        <p>Every product is sourced directly from authorised distributors. No fakes, no refurbished — only genuine electronics and appliances.</p>
+      </div>
+
+      <div class="why-card" onmouseover="this.style.borderColor='#1D4ED8'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="why-icon" style="background:rgba(217,119,6,0.12);color:#D97706">
+          <span class="material-symbols-outlined" style="font-size:30px;font-variation-settings:'FILL' 1">payments</span>
+        </div>
+        <h3>Easy MoMo Payment</h3>
+        <p>Pay conveniently with MTN Mobile Money. Simple, instant, and completely secure — no bank card needed.</p>
+      </div>
+
+      <div class="why-card" onmouseover="this.style.borderColor='#1D4ED8'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="why-icon" style="background:rgba(5,150,105,0.12);color:#059669">
+          <span class="material-symbols-outlined" style="font-size:30px;font-variation-settings:'FILL' 1">local_shipping</span>
+        </div>
+        <h3>Nationwide Delivery</h3>
+        <p>We deliver to all 16 regions of Ghana. Large items like TVs and fridges handled with extra care — no damage guarantee.</p>
+      </div>
+
+      <div class="why-card" onmouseover="this.style.borderColor='#1D4ED8'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="why-icon" style="background:rgba(124,58,237,0.12);color:#7C3AED">
+          <span class="material-symbols-outlined" style="font-size:30px;font-variation-settings:'FILL' 1">support_agent</span>
+        </div>
+        <h3>Expert After-Sales Support</h3>
+        <p>Chat with us on WhatsApp for installation help, troubleshooting or any after-purchase queries — anytime.</p>
+      </div>
+
+      <div class="why-card" onmouseover="this.style.borderColor='#1D4ED8'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="why-icon" style="background:rgba(239,68,68,0.1);color:#EF4444">
+          <span class="material-symbols-outlined" style="font-size:30px;font-variation-settings:'FILL' 1">sell</span>
+        </div>
+        <h3>Best Prices in Ghana</h3>
+        <p>We negotiate directly with suppliers so you get the best deals. Regular sales, promo codes, and bundle offers.</p>
+      </div>
+
+      <div class="why-card" onmouseover="this.style.borderColor='#1D4ED8'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="why-icon" style="background:rgba(219,39,119,0.1);color:#DB2777">
+          <span class="material-symbols-outlined" style="font-size:30px;font-variation-settings:'FILL' 1">warranty</span>
+        </div>
+        <h3>Warranty on All Appliances</h3>
+        <p>All home appliances come with full manufacturer warranty. We handle returns and replacements — zero stress.</p>
+      </div>
+
+    </div>
+  </section>
+
+</div><!-- END HOME -->
+
+<!-- SHOP PAGE -->
+<div class="page" id="page-shop">
+  <div style="max-width:1280px;margin:0 auto;padding:30px 20px 10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px">
+      <div>
+        <h1 style="font-size:1.6rem;margin-bottom:4px">All Products</h1>
+        <span id="product-count" style="color:var(--text-muted);font-size:0.875rem"></span>
+      </div>
+      <select id="sort-select" class="filter-select" style="padding:10px 16px">
+        <option value="default">Sort: Default</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Best Rated</option>
+        <option value="newest">Newest First</option>
+      </select>
+    </div>
+    <div class="filters-bar" id="shop-cat-filters" style="margin-bottom:24px"></div>
+  </div>
+  <div style="max-width:1280px;margin:0 auto;padding:0 20px 60px">
+    <div class="products-grid" id="shop-products"></div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL PAGE -->
+<div class="page" id="page-product"></div>
+
+<!-- CART PAGE -->
+<div class="page" id="page-cart">
+  <div style="max-width:1100px;margin:0 auto;padding:30px 20px">
+    <h1 style="margin-bottom:24px;font-size:1.6rem;display:flex;align-items:center;gap:10px">
+      <span class="material-symbols-outlined" style="color:#1D4ED8;font-variation-settings:'FILL' 1">shopping_cart</span> Shopping Cart
+    </h1>
+    <div id="cart-page-content">
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start">
+        <div>
+          <div class="data-table-wrap" style="padding:0">
+            <div class="data-table-header"><h3>Cart Items</h3></div>
+            <div style="padding:0 20px" id="cart-page-items"></div>
+          </div>
+        </div>
+        <div class="order-summary-box" id="cart-page-summary"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WISHLIST PAGE -->
+<div class="page" id="page-wishlist">
+  <div style="max-width:1280px;margin:0 auto;padding:30px 20px">
+    <h1 style="margin-bottom:24px;font-size:1.6rem;display:flex;align-items:center;gap:10px">
+      <span class="material-symbols-outlined" style="color:#EF4444;font-variation-settings:'FILL' 1">favorite</span> My Wishlist
+    </h1>
+    <div id="wishlist-page"></div>
+  </div>
+</div>
+
+<!-- CHECKOUT PAGE -->
+<div class="page" id="page-checkout"></div>
+
+<!-- TRACKING PAGE -->
+<div class="page" id="page-tracking">
+  <div id="tracking-page-content"></div>
+</div>
+
+<!-- SEARCH PAGE -->
+<div class="page" id="page-search">
+  <div class="search-results-wrap">
+    <div class="search-header" id="search-header"></div>
+    <div class="products-grid" id="search-results"></div>
+  </div>
+</div>
+
+<!-- ===== OVERLAYS ===== -->
+<div class="cart-overlay" id="cart-overlay"></div>
+
+<!-- Cart Sidebar -->
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h2 style="display:flex;align-items:center;gap:8px">
+      <span class="material-symbols-outlined" style="color:#1D4ED8;font-variation-settings:'FILL' 1">shopping_cart</span>
+      Cart <span id="cart-count-side" style="color:var(--text-muted);font-size:0.85rem;font-weight:400"></span>
+    </h2>
+    <button class="close-btn" onclick="closeCart()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer"></div>
+</div>
+
+<!-- Wishlist Sidebar -->
+<div class="wishlist-sidebar" id="wishlist-sidebar">
+  <div class="cart-header">
+    <h2 style="display:flex;align-items:center;gap:8px">
+      <span class="material-symbols-outlined" style="color:#EF4444;font-variation-settings:'FILL' 1">favorite</span> Wishlist
+    </h2>
+    <button class="close-btn" onclick="closeWishlist()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="cart-items" id="wishlist-items"></div>
+</div>
+
+<!-- Quick View Modal -->
+<div class="modal-overlay" id="quick-view-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Quick View</h3>
+      <button class="close-btn" onclick="closeModal('quick-view-modal')">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="modal-body" id="quick-view-body"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-container"></div>
+
+<!-- Back to Top -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+  <span class="material-symbols-outlined">keyboard_arrow_up</span>
+</button>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-bottom-nav">
+  <div class="nav-items">
+    <div class="mobile-nav-item active" data-page="home" onclick="App.navigate('home')">
+      <span class="material-symbols-outlined" style="font-size:1.4rem">home</span>
+      <span>Home</span>
+    </div>
+    <div class="mobile-nav-item" data-page="shop" onclick="App.navigate('shop')">
+      <span class="material-symbols-outlined" style="font-size:1.4rem">storefront</span>
+      <span>Shop</span>
+    </div>
+    <div class="mobile-nav-item" onclick="openCart()" style="position:relative">
+      <span class="material-symbols-outlined" style="font-size:1.4rem">shopping_cart</span>
+      <span class="badge cart-badge" style="display:none;top:-2px;right:10px">0</span>
+      <span>Cart</span>
+    </div>
+    <div class="mobile-nav-item" data-page="wishlist" onclick="App.navigate('wishlist')">
+      <span class="material-symbols-outlined" style="font-size:1.4rem">favorite</span>
+      <span>Saved</span>
+    </div>
+    <div class="mobile-nav-item" data-page="tracking" onclick="App.navigate('tracking')">
+      <span class="material-symbols-outlined" style="font-size:1.4rem">local_shipping</span>
+      <span>Track</span>
+    </div>
+  </div>
+</nav>
+
+<!-- FOOTER -->
+<footer class="footer" id="main-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="color:#3B82F6;font-size:1.4rem;margin-bottom:12px">
+        <div class="logo-icon">
+          <span class="material-symbols-outlined" style="font-size:20px;color:white;font-variation-settings:'FILL' 1">bolt</span>
+        </div>
+        VoltGH
+      </div>
+      <p>Ghana's most trusted electronics and home appliances store. Genuine products, best prices, delivered nationwide.</p>
+      <div class="footer-socials" style="margin-top:16px">
+        <a href="https://wa.me/233549703320" class="footer-social-btn" title="WhatsApp">
+          <span class="material-symbols-outlined" style="font-size:18px">chat</span>
+        </a>
+        <a href="#" class="footer-social-btn" title="Facebook">
+          <span class="material-symbols-outlined" style="font-size:18px">thumb_up</span>
+        </a>
+        <a href="#" class="footer-social-btn" title="Instagram">
+          <span class="material-symbols-outlined" style="font-size:18px">photo_camera</span>
+        </a>
+        <a href="#" class="footer-social-btn" title="Call">
+          <span class="material-symbols-outlined" style="font-size:18px">call</span>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a onclick="App.navigate('home')" style="cursor:pointer">Home</a></li>
+        <li><a onclick="App.navigate('shop')" style="cursor:pointer">Shop All</a></li>
+        <li><a onclick="App.navigate('cart')" style="cursor:pointer">My Cart</a></li>
+        <li><a onclick="App.navigate('wishlist')" style="cursor:pointer">Wishlist</a></li>
+        <li><a onclick="App.navigate('tracking')" style="cursor:pointer">Track Order</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <ul>
+        <li><a onclick="filterByCategory('c1');App.navigate('shop')" style="cursor:pointer">TVs &amp; Displays</a></li>
+        <li><a onclick="filterByCategory('c2');App.navigate('shop')" style="cursor:pointer">Refrigerators</a></li>
+        <li><a onclick="filterByCategory('c3');App.navigate('shop')" style="cursor:pointer">Washing Machines</a></li>
+        <li><a onclick="filterByCategory('c4');App.navigate('shop')" style="cursor:pointer">Air Conditioners</a></li>
+        <li><a onclick="filterByCategory('c5');App.navigate('shop')" style="cursor:pointer">Laptops &amp; PCs</a></li>
+        <li><a onclick="filterByCategory('c7');App.navigate('shop')" style="cursor:pointer">Cooking Appliances</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact Us</h4>
+      <ul>
+        <li><a href="https://wa.me/233549703320" target="_blank">WhatsApp: 0549703320</a></li>
+        <li><a>Accra, Ghana</a></li>
+        <li><a>Nationwide Delivery</a></li>
+        <li><a>MTN MoMo: 0549703320</a></li>
+      </ul>
+      <div style="margin-top:16px;padding:12px;background:rgba(29,78,216,0.12);border-radius:8px;border:1px solid rgba(29,78,216,0.2)">
+        <p style="font-size:0.8rem;color:#93C5FD;font-weight:600;display:flex;align-items:center;gap:6px">
+          <span class="material-symbols-outlined" style="font-size:16px">schedule</span> Business Hours
+        </p>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.45);margin-top:4px">Mon–Sat: 8am – 8pm<br>Sun: 10am – 6pm</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 VoltGH Electronics. All rights reserved.</span>
+    <span>Made with <span style="color:#EF4444">♥</span> in Ghana 🇬🇭</span>
+  </div>
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Home filter
+  function setHomeFilter(type, btn) {
+    document.querySelectorAll('.filters-bar .filter-tag').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const all = StorageService.getProducts();
+    let filtered = all;
+    if (type === 'hot')  filtered = all.filter(p => p.badge === 'Hot');
+    if (type === 'sale') filtered = all.filter(p => p.badge === 'Sale' || p.oldPrice);
+    if (type === 'new')  filtered = all.filter(p => p.isNew);
+    const container = document.getElementById('featured-products');
+    if (container) container.innerHTML = filtered.slice(0,8).map(p => createProductCard(p)).join('') ||
+      '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted)">No products in this filter</p>';
+  }
+
+  // Mobile search toggle
+  document.getElementById('mobile-search-toggle')?.addEventListener('click', () => {
+    const bar = document.getElementById('mobile-search-bar');
+    bar.style.display = bar.style.display === 'none' ? 'block' : 'none';
+    if (bar.style.display === 'block') document.getElementById('mobile-search-input')?.focus();
+  });
+
+  // Responsive
+  function handleResize() {
+    const isMobile = window.innerWidth <= 768;
+    const searchWrap = document.getElementById('search-wrap');
+    const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+    const hamburger = document.getElementById('hamburger');
+    if (searchWrap) searchWrap.style.display = isMobile ? 'none' : 'block';
+    if (mobileSearchToggle) mobileSearchToggle.style.display = isMobile ? 'flex' : 'none';
+    if (hamburger) hamburger.style.display = isMobile ? 'flex' : 'none';
+  }
+  window.addEventListener('resize', handleResize);
+  handleResize();
+
+  // Mobile search
+  document.getElementById('mobile-search-input')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const val = e.target.value.trim();
+      if (val) { App.navigate('search', val); document.getElementById('mobile-search-bar').style.display = 'none'; }
+    }
+  });
+</script>
+</body>
+</html>

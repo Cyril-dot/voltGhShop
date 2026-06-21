@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltGH Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    @media (max-width:1024px) {
+      .admin-sidebar-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        z-index: 99; display: none;
+      }
+      .admin-sidebar-overlay.active { display: block; }
+    }
+    .admin-mobile-topbar {
+      display: none;
+      position: sticky; top: 0; z-index: 50;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    @media (max-width:1024px) {
+      .admin-mobile-topbar { display: flex; }
+      .admin-content { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ADMIN LOGIN -->
+<div class="admin-login-page" id="admin-login">
+  <div class="admin-login-card">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,#1D4ED8,#1E40AF);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><span class="material-symbols-outlined" style="font-size:2.2rem;color:white;font-variation-settings:'FILL' 1">bolt</span></div>
+      <h1 style="font-size:1.5rem">VoltGH Admin</h1>
+      <p>Enter your password to access the dashboard</p>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-icon-wrap">
+        <span class="material-symbols-outlined" style="font-size:18px;position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted)">key</span>
+        <input type="password" id="admin-pass" placeholder="Enter admin password" onkeypress="if(event.key==='Enter') Admin.login()"
+          style="padding:12px 14px 12px 40px;border:1.5px solid var(--border);border-radius:10px;width:100%;background:var(--bg);color:var(--text);font-size:0.95rem;outline:none;transition:border-color 0.3s">
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:6px">Default password: <code style="background:var(--bg);padding:2px 6px;border-radius:4px">volt2024</code></p>
+    </div>
+    <button class="btn btn-primary" onclick="Admin.login()" style="width:100%;padding:13px;border-radius:10px;font-size:1rem;justify-content:center">
+      🔓 Login to Dashboard
+    </button>
+    <div style="text-align:center;margin-top:20px">
+      <a href="index.html" style="font-size:0.85rem;color:var(--text-muted)">← Back to Store</a>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div class="admin-layout" id="admin-app" style="display:none">
+
+  <!-- Mobile Top Bar -->
+  <div class="admin-mobile-topbar">
+    <div style="font-family:var(--font-display);font-weight:800;color:var(--primary);font-size:1.1rem">VoltGH Admin</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="admin-dark-toggle" onclick="toggleAdminDark()" style="width:36px;height:36px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:20px">dark_mode</span></button>
+      <button onclick="document.getElementById('admin-sidebar').classList.toggle('open'); document.getElementById('admin-sidebar-overlay').classList.toggle('active')"
+        style="width:36px;height:36px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.2rem"></button>
+    </div>
+  </div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="admin-sidebar-overlay" id="admin-sidebar-overlay" onclick="document.getElementById('admin-sidebar').classList.remove('open'); this.classList.remove('active')"></div>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-logo">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:#1D4ED8;border-radius:8px;display:flex;align-items:center;justify-content:center"><span class="material-symbols-outlined" style="font-size:20px;color:white;font-variation-settings:'FILL' 1">bolt</span></div>
+        VoltGH Admin
+      </div>
+    </div>
+
+    <nav class="admin-nav">
+      <button class="admin-nav-item active" data-section="dashboard" onclick="Admin.navigate('dashboard')">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1">dashboard</span> Dashboard
+      </button>
+      <button class="admin-nav-item" data-section="orders" onclick="Admin.navigate('orders')">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1">receipt_long</span> Orders
+      </button>
+      <button class="admin-nav-item" data-section="products" onclick="Admin.navigate('products')">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1">devices</span> Products
+      </button>
+      <button class="admin-nav-item" data-section="categories" onclick="Admin.navigate('categories')">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1">category</span> Categories
+      </button>
+      <button class="admin-nav-item" data-section="customers" onclick="Admin.navigate('customers')">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1">group</span> Customers
+      </button>
+      <button class="admin-nav-item" data-section="settings" onclick="Admin.navigate('settings')">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1">settings</span> Settings
+      </button>
+
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:16px 0">
+
+      <a href="index.html" class="admin-nav-item" style="text-decoration:none;display:flex">
+        <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1">storefront</span> View Store
+      </a>
+      <button class="admin-nav-item" onclick="Admin.logout()">
+        <span class="material-symbols-outlined" style="font-size:17px">logout</span> Logout
+      </button>
+    </nav>
+
+    <div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.1)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:32px;height:32px;background:rgba(29,78,216,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem">👤</div>
+        <div>
+          <div style="font-size:0.8rem;color:white;font-weight:600">Admin</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.4)">VoltGH Store</div>
+        </div>
+      </div>
+      <button id="dark-btn" onclick="toggleAdminDark()" style="margin-top:12px;width:100%;padding:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.7);cursor:pointer;font-size:0.8rem;display:flex;align-items:center;gap:6px;justify-content:center">
+        <span class="material-symbols-outlined" style="font-size:16px">dark_mode</span> Toggle Dark Mode
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-content" id="admin-content">
+    <!-- Rendered by Admin.navigate() -->
+    <div style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+      <div class="spinner"></div>
+    </div>
+  </main>
+
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+<script>
+  // Dark mode for admin
+  function toggleAdminDark() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('phonix_dark', document.body.classList.contains('dark'));
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('dark-btn').textContent = isDark ? '<span class="material-symbols-outlined" style="font-size:16px">light_mode</span> Toggle Light Mode' : '<span class="material-symbols-outlined" style="font-size:16px">dark_mode</span> Toggle Dark Mode';
+    const toggleBtn = document.getElementById('admin-dark-toggle');
+    if (toggleBtn) toggleBtn.textContent = isDark ? '☀️' : '🌙';
+  }
+
+  // Apply saved dark mode
+  if (localStorage.getItem('phonix_dark') === 'true') {
+    document.body.classList.add('dark');
+    const btn = document.getElementById('dark-btn');
+    const toggleBtn = document.getElementById('admin-dark-toggle');
+    if (btn) btn.textContent = '<span class="material-symbols-outlined" style="font-size:16px">light_mode</span> Toggle Light Mode';
+    if (toggleBtn) toggleBtn.textContent = '☀️';
+  }
+
+  // Init admin
+  document.addEventListener('DOMContentLoaded', () => {
+    seedDefaultData();
+    Admin.init();
+  });
+</script>
+</body>
+</html>
