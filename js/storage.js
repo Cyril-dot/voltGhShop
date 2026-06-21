@@ -264,8 +264,8 @@ function seedDefaultData() {
   StorageService.saveProducts(products);
   StorageService.saveSettings({
     storeName: 'VoltGH Store',
-    whatsapp: '233549703320',
-    momoNumber: '0549703320',
+    whatsapp: '233248828727',
+    momoNumber: '0248828727',
     momoNetwork: 'MTN Mobile Money',
     currency: 'GHS',
     deliveryFee: 50,
