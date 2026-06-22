@@ -116,23 +116,27 @@ const ImgBBService = {
 
 // ===== DEFAULT DATA SEEDER =====
 function seedDefaultData() {
+  // Force re-seed to apply stock updates — remove the next line after first load
+  localStorage.removeItem('voltgh_products');
+
   if (StorageService.getProducts().length > 0) return;
 
   const categories = [
-    { id: 'c1', name: 'TVs & Displays',    matIcon: 'tv',              color: '#2563EB' },
-    { id: 'c2', name: 'Refrigerators',     matIcon: 'kitchen',         color: '#0891B2' },
-    { id: 'c3', name: 'Washing Machines',  matIcon: 'local_laundry_service', color: '#7C3AED' },
-    { id: 'c4', name: 'Air Conditioners',  matIcon: 'ac_unit',         color: '#0D9488' },
-    { id: 'c5', name: 'Laptops & PCs',     matIcon: 'laptop',          color: '#EA580C' },
-    { id: 'c6', name: 'Audio & Sound',     matIcon: 'speaker',         color: '#DB2777' },
-    { id: 'c7', name: 'Cooking Appliances',matIcon: 'microwave',       color: '#D97706' },
-    { id: 'c8', name: 'Phones & Tablets',  matIcon: 'smartphone',      color: '#16A34A' }
+    { id: 'c1', name: 'TVs & Displays',     matIcon: 'tv',                    color: '#2563EB' },
+    { id: 'c2', name: 'Refrigerators',      matIcon: 'kitchen',               color: '#0891B2' },
+    { id: 'c3', name: 'Washing Machines',   matIcon: 'local_laundry_service', color: '#7C3AED' },
+    { id: 'c4', name: 'Air Conditioners',   matIcon: 'ac_unit',               color: '#0D9488' },
+    { id: 'c5', name: 'Laptops & PCs',      matIcon: 'laptop',                color: '#EA580C' },
+    { id: 'c6', name: 'Audio & Sound',      matIcon: 'speaker',               color: '#DB2777' },
+    { id: 'c7', name: 'Cooking Appliances', matIcon: 'microwave',             color: '#D97706' },
+    { id: 'c8', name: 'Phones & Tablets',   matIcon: 'smartphone',            color: '#16A34A' }
   ];
 
   const products = [
+    // ─── SOLD OUT ────────────────────────────────────────────────────────────
     {
       id: 'p1', name: 'Samsung 55" Crystal UHD 4K Smart TV', category: 'c1',
-      price: 6500, oldPrice: 7800, stock: 10,
+      price: 6500, oldPrice: 7800, stock: 0,
       image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f4834c?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1593359677879-a4bb92f4834c?w=600&q=80','https://images.unsplash.com/photo-1548686304-89d188a80029?w=600&q=80'],
       description: 'Samsung 55-inch Crystal UHD 4K Smart TV with PurColor technology, Motion Xcelerator, and built-in Alexa. Stream Netflix, YouTube and more directly.',
@@ -140,12 +144,13 @@ function seedDefaultData() {
     },
     {
       id: 'p2', name: 'LG 43" Full HD Smart TV', category: 'c1',
-      price: 3200, oldPrice: 3900, stock: 18,
+      price: 3200, oldPrice: 3900, stock: 0,
       image: 'https://images.unsplash.com/photo-1601944177325-f8867652837f?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1601944177325-f8867652837f?w=600&q=80'],
       description: 'LG 43-inch Full HD Smart TV with webOS, ThinQ AI, and Magic Remote. Enjoy vivid colours and exceptional clarity for movies and gaming.',
       badge: 'Sale', rating: 4.5, reviews: 144, isNew: false
     },
+    // ─── IN STOCK ────────────────────────────────────────────────────────────
     {
       id: 'p3', name: 'Samsung 300L Double Door Fridge', category: 'c2',
       price: 4800, oldPrice: 5500, stock: 7,
@@ -154,14 +159,16 @@ function seedDefaultData() {
       description: 'Samsung 300-litre double door refrigerator with Twin Cooling Plus, No-Frost technology, and digital inverter compressor. Energy-efficient and whisper-quiet.',
       badge: 'Hot', rating: 4.6, reviews: 178, isNew: false
     },
+    // ─── SOLD OUT ────────────────────────────────────────────────────────────
     {
       id: 'p4', name: 'Hisense 205L Single Door Fridge', category: 'c2',
-      price: 1900, oldPrice: 2300, stock: 22,
+      price: 1900, oldPrice: 2300, stock: 0,
       image: 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=600&q=80'],
       description: 'Hisense 205-litre single door fridge with adjustable glass shelves, vegetable crisper, and low noise compressor. Perfect for small families.',
       badge: 'New', rating: 4.3, reviews: 87, isNew: true
     },
+    // ─── IN STOCK ────────────────────────────────────────────────────────────
     {
       id: 'p5', name: 'LG 7kg Front Load Washing Machine', category: 'c3',
       price: 3800, oldPrice: 4500, stock: 9,
@@ -170,14 +177,16 @@ function seedDefaultData() {
       description: 'LG 7kg front load washer with 6 Motion Direct Drive, Steam+ technology, and AI DD. Multiple wash programs for all fabric types.',
       badge: '', rating: 4.8, reviews: 231, isNew: false
     },
+    // ─── SOLD OUT ────────────────────────────────────────────────────────────
     {
       id: 'p6', name: 'Samsung 1.5HP Split Air Conditioner', category: 'c4',
-      price: 4200, oldPrice: 5000, stock: 14,
+      price: 4200, oldPrice: 5000, stock: 0,
       image: 'https://images.unsplash.com/photo-1631545820632-9e5a1f23c8b2?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1631545820632-9e5a1f23c8b2?w=600&q=80'],
       description: 'Samsung 1.5HP Wind-Free split air conditioner with Fast Cooling, Auto Clean, and Wi-Fi control. Keeps you cool silently and efficiently.',
       badge: 'Hot', rating: 4.6, reviews: 159, isNew: false
     },
+    // ─── IN STOCK ────────────────────────────────────────────────────────────
     {
       id: 'p7', name: 'HP Pavilion Laptop 15.6" (i5 12th Gen)', category: 'c5',
       price: 7200, oldPrice: 8500, stock: 6,
@@ -186,14 +195,16 @@ function seedDefaultData() {
       description: 'HP Pavilion laptop with Intel Core i5 12th Gen, 8GB RAM, 512GB SSD, 15.6-inch FHD display, Windows 11. Ideal for work and entertainment.',
       badge: 'Sale', rating: 4.7, reviews: 118, isNew: false
     },
+    // ─── 2 LEFT IN STOCK ─────────────────────────────────────────────────────
     {
       id: 'p8', name: 'Dell Inspiron 14 (Ryzen 5)', category: 'c5',
-      price: 5800, oldPrice: null, stock: 11,
+      price: 5800, oldPrice: null, stock: 2,
       image: 'https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1593642702821-c8da6771f0c6?w=600&q=80'],
       description: 'Dell Inspiron 14 powered by AMD Ryzen 5, 16GB RAM, 512GB SSD and 14-inch FHD touch display. Slim, powerful and great all-day battery.',
       badge: 'New', rating: 4.5, reviews: 74, isNew: true
     },
+    // ─── IN STOCK ────────────────────────────────────────────────────────────
     {
       id: 'p9', name: 'Sony HT-S400 2.1ch Soundbar', category: 'c6',
       price: 2100, oldPrice: 2600, stock: 16,
@@ -202,14 +213,16 @@ function seedDefaultData() {
       description: 'Sony HT-S400 soundbar with powerful subwoofer, Bluetooth 5.0, HDMI ARC, and S-Force PRO front surround sound. Turn your TV into a cinema.',
       badge: '', rating: 4.4, reviews: 195, isNew: false
     },
+    // ─── 2 LEFT IN STOCK ─────────────────────────────────────────────────────
     {
       id: 'p10', name: 'JBL Xtreme 3 Portable Bluetooth Speaker', category: 'c6',
-      price: 1400, oldPrice: 1750, stock: 25,
+      price: 1400, oldPrice: 1750, stock: 2,
       image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=600&q=80'],
       description: 'JBL Xtreme 3 with 15-hour playtime, IP67 waterproof, PartyBoost multi-speaker pairing, and built-in powerbank. Perfect for outdoor fun.',
       badge: 'Sale', rating: 4.6, reviews: 312, isNew: false
     },
+    // ─── IN STOCK ────────────────────────────────────────────────────────────
     {
       id: 'p11', name: 'Midea 25L Microwave Oven', category: 'c7',
       price: 680, oldPrice: 850, stock: 30,
@@ -218,14 +231,16 @@ function seedDefaultData() {
       description: 'Midea 25-litre microwave oven with 900W power, 10 power levels, digital display, and 30-minute timer. Defrost, reheat and cook with ease.',
       badge: '', rating: 4.2, reviews: 143, isNew: false
     },
+    // ─── AVAILABLE IN 3 DAYS ─────────────────────────────────────────────────
     {
       id: 'p12', name: 'Scanfrost 4-Burner Gas Cooker', category: 'c7',
-      price: 1550, oldPrice: 1900, stock: 20,
+      price: 1550, oldPrice: 1900, stock: 0, availableInDays: 3,
       image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80'],
       description: 'Scanfrost 4-burner gas cooker with oven, auto-ignition, tempered glass lid, and stainless steel finish. Built for busy Ghanaian kitchens.',
       badge: 'Hot', rating: 4.5, reviews: 267, isNew: false
     },
+    // ─── IN STOCK ────────────────────────────────────────────────────────────
     {
       id: 'p13', name: 'Samsung Galaxy A35 5G', category: 'c8',
       price: 2400, oldPrice: 2800, stock: 19,
@@ -242,14 +257,16 @@ function seedDefaultData() {
       description: 'Tecno POVA 6 Pro with 6.78-inch FHD+ 144Hz display, 70W fast charging, 6000mAh battery and 50MP AI camera. Big power, great value.',
       badge: 'Sale', rating: 4.3, reviews: 184, isNew: false
     },
+    // ─── 2 LEFT IN STOCK ─────────────────────────────────────────────────────
     {
       id: 'p15', name: 'Philips Air Fryer XXL (6.2L)', category: 'c7',
-      price: 1200, oldPrice: 1500, stock: 14,
+      price: 1200, oldPrice: 1500, stock: 2,
       image: 'https://images.unsplash.com/photo-1648145887782-8cd7a6a5bee5?w=600&q=80',
       images: ['https://images.unsplash.com/photo-1648145887782-8cd7a6a5bee5?w=600&q=80'],
       description: 'Philips XXL Air Fryer cooks crispy meals with up to 90% less fat. 6.2-litre capacity feeds the whole family. Digital display with 7 pre-sets.',
       badge: 'Hot', rating: 4.8, reviews: 421, isNew: false
     },
+    // ─── IN STOCK ────────────────────────────────────────────────────────────
     {
       id: 'p16', name: 'Hisense 1HP Split AC (Inverter)', category: 'c4',
       price: 3100, oldPrice: 3700, stock: 12,
