@@ -3,7 +3,7 @@ const ExpressPayService = {
   // Get API key from environment - will be injected at runtime
   getApiKey: () => {
     // For development, fallback to env var from window or empty
-    return window.EXPRESS_PAY_API_KEY || '';
+    return window.EXPRESS_PAY_API_KEY || 'z009d07bz1exdbBHZUKh7-ut91xUQJuobm9zgLRyWp-8v0mMSbAWF5oJilycJNu-pGlutTFz8HsTjhA7nNt';
   },
 
   getPublicKey: () => {
