@@ -692,7 +692,7 @@ function renderWishlistPage() {
   ` : `<div class="products-grid">${list.map(p => createProductCard(p)).join('')}</div>`;
 }
 
-// ===== CHECKOUT =====
+// ===== CHECKOUT WITH EXPRESS PAY =====
 function renderCheckout() {
   const cart = StorageService.getCart();
   if (cart.length === 0) { App.navigate('shop'); showToast('Your cart is empty!', 'warning'); return; }
@@ -751,9 +751,44 @@ function renderCheckout() {
             </div>
           </div>
 
-          <!-- PAYMENT -->
-          <div class="checkout-form-section">
-            <h2><span class="material-symbols-outlined mat-icon-sm" style="color:#D97706;font-variation-settings:'FILL' 1">payments</span> Payment via Mobile Money</h2>
+          <!-- PAYMENT METHOD SELECTION -->
+          <div class="checkout-form-section" style="margin-bottom:20px">
+            <h2><span class="material-symbols-outlined mat-icon-sm" style="color:#D97706;font-variation-settings:'FILL' 1">payments</span> Payment Method</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+              <div class="payment-option" id="payment-ep" onclick="selectPaymentMethod('express-pay')" style="border:2px solid #1D4ED8;border-radius:10px;padding:16px;cursor:pointer;background:rgba(29,78,216,0.05)">
+                <input type="radio" name="payment" value="express-pay" checked style="margin-bottom:8px">
+                <div style="font-weight:700;color:#1D4ED8">Express Pay</div>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">Fast & Secure Card Payments</p>
+              </div>
+              <div class="payment-option" id="payment-momo" onclick="selectPaymentMethod('momo')" style="border:2px solid var(--border);border-radius:10px;padding:16px;cursor:pointer">
+                <input type="radio" name="payment" value="momo" style="margin-bottom:8px">
+                <div style="font-weight:700">Mobile Money</div>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">MTN ${settings.momoNumber}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- EXPRESS PAY PAYMENT -->
+          <div class="checkout-form-section" id="payment-form-express-pay" style="display:block;margin-bottom:20px">
+            <h3 style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
+              <span class="material-symbols-outlined" style="font-size:20px;color:#1D4ED8;font-variation-settings:'FILL' 1">credit_card</span>
+              Express Pay Secure Payment
+            </h3>
+            <div style="background:rgba(29,78,216,0.08);border:1px solid rgba(29,78,216,0.3);border-radius:8px;padding:14px;margin-bottom:14px">
+              <p style="font-size:0.85rem;color:var(--text-muted);margin:0">You'll be redirected to Express Pay to complete your payment securely using your card.</p>
+            </div>
+            <button class="btn btn-primary" style="width:100%;padding:13px;border-radius:10px;margin-bottom:10px;font-weight:700" onclick="processExpressPayPayment(${total})">
+              <span class="material-symbols-outlined mat-icon-sm" style="font-variation-settings:'FILL' 1">credit_card</span> Pay with Express Pay — GHS ${total.toFixed(2)}
+            </button>
+            <p style="font-size:0.75rem;color:var(--text-muted);text-align:center">🔒 Secure checkout powered by Express Pay</p>
+          </div>
+
+          <!-- MOMO PAYMENT -->
+          <div class="checkout-form-section" id="payment-form-momo" style="display:none">
+            <h3 style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
+              <span class="material-symbols-outlined" style="font-size:20px;color:#D97706;font-variation-settings:'FILL' 1">payments</span>
+              Mobile Money Payment
+            </h3>
             <div class="momo-box">
               <div class="momo-header">
                 <div class="momo-icon"><span class="material-symbols-outlined" style="font-size:1.6rem;font-variation-settings:'FILL' 1;color:#92400E">payments</span></div>
@@ -773,24 +808,10 @@ function renderCheckout() {
                 <label>MoMo Reference / Transaction ID</label>
                 <input type="text" id="co-momo-ref" placeholder="e.g. ABC123456789">
               </div>
-              <div class="form-group">
-                <label>Payment Screenshot (optional)</label>
-                <div class="upload-area" onclick="document.getElementById('screenshot-upload').click()">
-                  <span class="material-symbols-outlined" style="font-size:2rem;color:var(--text-muted);display:block;margin-bottom:10px">add_a_photo</span>
-                  <p>Click to upload payment screenshot</p>
-                  <input type="file" id="screenshot-upload" accept="image/*" style="display:none" onchange="previewScreenshot(this)">
-                </div>
-                <img id="screenshot-preview" class="img-preview">
-                <div id="upload-status" style="font-size:0.8rem;margin-top:6px;color:var(--text-muted)"></div>
-              </div>
             </div>
-
-            <button class="paid-btn" style="margin-top:20px" onclick="placeOrder()">
+            <button class="btn btn-primary" style="width:100%;padding:13px;border-radius:10px;margin-top:20px" onclick="placeOrderWithMomo()">
               ✅ I Have Paid — Place Order
             </button>
-            <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:10px">
-              Your order will be confirmed via WhatsApp after payment verification
-            </p>
           </div>
         </div>
 
@@ -825,35 +846,95 @@ function renderCheckout() {
   `;
 }
 
-let screenshotUrl = null;
-
-async function previewScreenshot(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  const preview = document.getElementById('screenshot-preview');
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    preview.src = e.target.result;
-    preview.classList.add('visible');
-  };
-  reader.readAsDataURL(file);
-
-  const statusEl = document.getElementById('upload-status');
-  statusEl.textContent = '⬆️ Uploading screenshot...';
-
-  try {
-    const result = await ImgBBService.upload(file);
-    screenshotUrl = result.url;
-    statusEl.textContent = '✅ Screenshot uploaded successfully!';
-    statusEl.style.color = 'var(--success)';
-  } catch (err) {
-    statusEl.textContent = '⚠️ Could not upload screenshot (saved locally)';
-    statusEl.style.color = 'var(--warning)';
+// Payment method selection
+function selectPaymentMethod(method) {
+  document.querySelectorAll('.payment-option').forEach(opt => {
+    opt.style.borderColor = 'var(--border)';
+    opt.style.background = 'transparent';
+  });
+  
+  if (method === 'express-pay') {
+    document.getElementById('payment-ep').style.borderColor = '#1D4ED8';
+    document.getElementById('payment-ep').style.background = 'rgba(29,78,216,0.05)';
+    document.getElementById('payment-form-express-pay').style.display = 'block';
+    document.getElementById('payment-form-momo').style.display = 'none';
+  } else {
+    document.getElementById('payment-momo').style.borderColor = '#1D4ED8';
+    document.getElementById('payment-momo').style.background = 'rgba(29,78,216,0.05)';
+    document.getElementById('payment-form-express-pay').style.display = 'none';
+    document.getElementById('payment-form-momo').style.display = 'block';
   }
 }
 
-function placeOrder() {
+// Process Express Pay Payment
+async function processExpressPayPayment(total) {
+  const name = document.getElementById('co-name')?.value.trim();
+  const phone = document.getElementById('co-phone')?.value.trim();
+  const address = document.getElementById('co-address')?.value.trim();
+  const city = document.getElementById('co-city')?.value;
+  const email = document.getElementById('co-email')?.value.trim();
+  const notes = document.getElementById('co-notes')?.value.trim();
+
+  if (!name || !phone || !address || !city) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+
+  if (phone.length < 10) {
+    showToast('Please enter a valid phone number', 'error');
+    return;
+  }
+
+  const cart = StorageService.getCart();
+  const settings = StorageService.getSettings();
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const savings = appliedDiscount ? appliedDiscount.savings : 0;
+  const delivery = (subtotal - savings) >= settings.freeDeliveryThreshold ? 0 : settings.deliveryFee;
+  const orderTotal = subtotal - savings + delivery;
+
+  const orderId = StorageService.generateOrderId();
+
+  const order = {
+    id: orderId,
+    customer: { name, phone, email, address, city, notes },
+    items: cart,
+    subtotal, savings, delivery, total: orderTotal,
+    status: 'pending',
+    paymentMethod: 'express-pay',
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    // Initiate Express Pay
+    const result = await ExpressPayService.initiate({
+      orderId: orderId,
+      total: orderTotal,
+      customer: { name, phone, email: email || 'noreply@voltgh.com', address, city, notes },
+      items: cart
+    });
+
+    if (result.success) {
+      // Save order before redirect
+      StorageService.addOrder(order);
+      order.paymentReference = result.reference;
+      StorageService.updateOrder(orderId, { paymentReference: result.reference });
+
+      // Clear cart
+      StorageService.clearCart();
+      updateCartBadge();
+      appliedDiscount = null;
+
+      // Redirect to Express Pay
+      window.location.href = result.checkoutUrl;
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+    showToast(`Payment initialization failed: ${error.message}`, 'error');
+  }
+}
+
+// Process Mobile Money Payment
+function placeOrderWithMomo() {
   const name = document.getElementById('co-name')?.value.trim();
   const phone = document.getElementById('co-phone')?.value.trim();
   const address = document.getElementById('co-address')?.value.trim();
@@ -867,7 +948,10 @@ function placeOrder() {
     return;
   }
 
-  if (phone.length < 10) { showToast('Please enter a valid phone number', 'error'); return; }
+  if (phone.length < 10) {
+    showToast('Please enter a valid phone number', 'error');
+    return;
+  }
 
   const cart = StorageService.getCart();
   const settings = StorageService.getSettings();
@@ -884,8 +968,8 @@ function placeOrder() {
     items: cart,
     subtotal, savings, delivery, total,
     momoRef: momoRef || 'Not provided',
-    screenshotUrl,
     status: 'pending',
+    paymentMethod: 'momo',
     createdAt: new Date().toISOString()
   };
 
@@ -893,7 +977,7 @@ function placeOrder() {
 
   if (momoRef) {
     StorageService.addPayment({
-      orderId, reference: momoRef, screenshotUrl,
+      orderId, reference: momoRef,
       amount: total, timestamp: new Date().toISOString()
     });
   }
@@ -990,9 +1074,9 @@ function renderTracking() {
       <p style="text-align:center;color:var(--text-muted);margin-bottom:30px">Enter your order number to see updates</p>
 
       <div class="tracking-input-wrap">
-        <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px">Order number format: PGH-XXXXX-XXXX</p>
+        <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px">Order number format: VGH-XXXXX-XXXX</p>
         <div style="display:flex;gap:10px;max-width:400px;margin:0 auto">
-          <input type="text" id="track-input" placeholder="e.g. PGH-ABC123-DEF4"
+          <input type="text" id="track-input" placeholder="e.g. VGH-ABC123-DEF4"
             style="flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:0.9rem;outline:none"
             onkeypress="if(event.key==='Enter') trackOrder()">
           <button class="btn btn-primary" onclick="trackOrder()" style="border-radius:8px;padding:11px 20px">Track</button>
@@ -1065,16 +1149,6 @@ function trackOrder() {
             </div>
           `;
         }).join('')}
-        ${order.status === 'cancelled' ? `
-          <div class="tracking-step">
-            <div class="step-line">
-              <div class="step-dot done" style="background:var(--error);border-color:var(--error)">✕</div>
-            </div>
-            <div class="step-content">
-              <h4 style="color:var(--error)">Cancelled</h4>
-              <p>Order was cancelled</p>
-            </div>
-          </div>` : ''}
       </div>
 
       <hr class="summary-divider" style="margin:20px 0">
@@ -1170,6 +1244,9 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
   updateWishlistBadge();
   App.navigate('home');
+
+  // Check for payment verification callback
+  handlePaymentCallback();
 
   // Search handlers
   document.getElementById('search-input')?.addEventListener('keypress', handleSearch);
