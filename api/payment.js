@@ -18,7 +18,7 @@ const EXPRESS_PAY_BASE = {
   production: 'https://expresspaygh.com'
 };
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, message: 'Method not allowed' });
   }
@@ -74,7 +74,7 @@ async function createPayment(req, res, { MERCHANT_ID, API_KEY, BASE_URL }) {
       'firstname':    firstName,
       'lastname':     lastName,
       'phone':        customer.phone,
-      'email':        customer.email || 'noreply@voltgh.com'
+      'email':        customer.email || 'cybstech67@gmail.com'
     });
 
     const response = await fetch(`${BASE_URL}/api/submit.php`, {
