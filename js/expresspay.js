@@ -1,66 +1,35 @@
-// ===== EXPRESS PAY INTEGRATION =====
+// ===== EXPRESS PAY INTEGRATION (CLIENT) =====
+// All calls go through our own backend (/api/payment).
+// The merchant-id and api-key never touch the browser.
+
 const ExpressPayService = {
 
-  getApiKey: () => {
-    return window.EXPRESS_PAY_API_KEY || 'z009d07bz1exdbBHZUKh7-ut91xUQJuobm9zgLRyWp-8v0mMSbAWF5oJilycJNu-pGlutTFz8HsTjhA7nNt';
-  },
-
-  // Initialize Express Pay checkout — correct Express Pay Ghana endpoint
+  // Initialize Express Pay checkout via our backend
   async initiate(orderData) {
-    const apiKey = this.getApiKey();
-    if (!apiKey) {
-      throw new Error('Express Pay API key not configured.');
-    }
-
     try {
-      // Generate unique reference
-      const reference = `VGH-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-
-      // Express Pay Ghana correct payload format
-      const payload = {
-        'merchant-id':  apiKey,
-        'currency':     'GHS',
-        'amount':       orderData.total.toFixed(2),
-        'order-id':     orderData.orderId,
-        'order-desc':   `VoltGH Order ${orderData.orderId}`,
-        'redirect-url': `${window.location.origin}${window.location.pathname}?success=true&reference=${reference}`,
-        'post-url':     `${window.location.origin}/verify-payment`,
-        'firstname':    orderData.customer.name.split(' ')[0],
-        'lastname':     orderData.customer.name.split(' ').slice(1).join(' ') || 'Customer',
-        'phone':        orderData.customer.phone,
-        'email':        orderData.customer.email || 'noreply@voltgh.com'
-      };
-
-      // Correct Express Pay Ghana API endpoint
-      const response = await fetch('https://expresspaygh.com/api/submit.php', {
+      const response = await fetch('/api/payment', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': apiKey
-        },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action:   'create',
+          orderId:  orderData.orderId,
+          total:    orderData.total,
+          customer: orderData.customer
+        })
       });
-
-      if (!response.ok) {
-        throw new Error(`Express Pay error: ${response.status} ${response.statusText}`);
-      }
 
       const data = await response.json();
 
-      // Express Pay Ghana returns { status: 1, token: '...' } on success
-      if (!data || data.status !== 1) {
+      if (!response.ok || !data.success) {
         throw new Error(data?.message || 'Failed to initialize Express Pay payment.');
       }
 
-      // Build the checkout URL using the token
-      const checkoutUrl = `https://expresspaygh.com/api/checkout.php?token=${data.token}`;
-
       return {
-        success:      true,
-        checkoutUrl:  checkoutUrl,
-        reference:    reference,
-        token:        data.token,
-        orderId:      orderData.orderId
+        success:     true,
+        checkoutUrl: data.checkoutUrl,
+        reference:   data.reference,
+        token:       data.token,
+        orderId:     data.orderId
       };
 
     } catch (error) {
@@ -69,31 +38,21 @@ const ExpressPayService = {
     }
   },
 
-  // Verify payment after redirect callback
+  // Verify payment after redirect callback via our backend
   async verifyPayment(token) {
-    const apiKey = this.getApiKey();
-    if (!apiKey) {
-      throw new Error('Express Pay API key not configured.');
-    }
-
     try {
-      const response = await fetch('https://expresspaygh.com/api/query.php', {
+      const response = await fetch('/api/payment', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': apiKey
-        },
-        body: JSON.stringify({
-          'merchant-id': apiKey,
-          'token':       token
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'verify', token })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Verification error: ${response.status} ${response.statusText}`);
+        throw new Error(data?.message || `Verification error: ${response.status}`);
       }
 
-      const data = await response.json();
       return data;
 
     } catch (error) {
